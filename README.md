@@ -44,7 +44,7 @@ name=Debian SID
 kernel=sdmc:/linux/dtbImage.wiiu
 cmdline=root=/dev/mmcblk0p2 rootwait
 ```
-linux-loader's boot.cfg uses the concept of "profiles" to set up configurations for the Linux kernel. Note the section `[profile:debian]` - this creates a profile named `debian` with all the settings that follow. More on this later.
+linux-loader's boot.cfg uses the concept of "profiles" to set up configurations for the Linux kernel. Note the section `[profile:debian]` - this creates a profile named `debian` with all the settings that follow.
 
 The first section, `[loader]`, defines settings to control linux-loader's behaviour. The only option it has right now is `default`, to set the profile to be booted. You can see in the example that this is set to `debian`, so linux-loader will find and use the settings under `[profile:debian]`. This option must be present to use the boot.cfg features. It's intended for forwards-compatibility in case we ever add a boot menu.
 
