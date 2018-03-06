@@ -54,6 +54,7 @@ struct ProfileConfig {
 	bool enabled;
 	char name[64];
 	char humanName[64];
+	char initrdPath[128];
 	char kernelPath[128];
 	char kernelCmd[256];
 };
@@ -72,6 +73,7 @@ struct wiiu_ppc_data {
 	unsigned int initrd_sz;
 };
 static struct wiiu_ppc_data* ppc_data = (void*)0x89200000;
+#define COMMS_AREA_END 0x8C000000
 
 #define LT_IPC_ARMCTRL_COMPAT_X1 0x4
 #define LT_IPC_ARMCTRL_COMPAT_Y1 0x1
@@ -137,6 +139,8 @@ static int config_handler(void* user, const char* section, const char* name, con
 		}
 		if (strcmp("name", name) == 0) {
 			strncpy(profiles[ndx].humanName, value, sizeof(profiles[ndx].humanName));
+		} else if (strcmp("initrd", name) == 0) {
+			strncpy(profiles[ndx].initrdPath, value, sizeof(profiles[ndx].initrdPath));
 		} else if (strcmp("kernel", name) == 0) {
 			strncpy(profiles[ndx].kernelPath, value, sizeof(profiles[ndx].kernelPath));
 		} else if (strcmp("cmdline", name) == 0) {
@@ -173,10 +177,25 @@ void NORETURN app_run() {
 		res = ppc_load_file(profiles[profileNdx].kernelPath, &ppc_entry);
 		if (res >= 0) kernel_loaded = true;
 
-	/*	Put kernel commandline at end of memory, ready for the boot wrapper to read */
+	/*	Put kernel commandline in comms area, ready for the boot wrapper to read */
 		if (strlen(profiles[profileNdx].kernelCmd) > 0) {
 			strncpy(ppc_data->cmdline, profiles[profileNdx].kernelCmd, sizeof(ppc_data->cmdline));
 			write32((unsigned int)&ppc_data->magic, WIIU_LOADER_MAGIC);
+		}
+	/*	Put initrd at end of comms area 
+		TODO: make this safer - could overwrite comms area */
+		if (strlen(profiles[profileNdx].initrdPath) > 0) {
+			FILE* initrd_file = fopen(profiles[profileNdx].initrdPath, "rb");
+			if (initrd_file) {
+				fseek(initrd_file, 0L, SEEK_END);
+				ppc_data->initrd_sz = ftell(initrd_file);
+				fseek(initrd_file, 0L, SEEK_SET);
+				ppc_data->initrd = (void*)COMMS_AREA_END - ppc_data->initrd_sz;
+
+				printf("[INFO] Loading initrd into 0x%08X, size 0x%X...\n", (unsigned int)ppc_data->initrd, ppc_data->initrd_sz);
+				fread(ppc_data->initrd, ppc_data->initrd_sz, 1, initrd_file);
+				fclose(initrd_file);
+			}
 		}
 	}
 
