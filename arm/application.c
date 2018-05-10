@@ -21,6 +21,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h> //is malloc broken?
 #include <string.h>
 #include <stdbool.h>
 
@@ -46,6 +47,7 @@ static const char* kernel_locs[] = {
 
 struct LoaderConfig {
 	char defaultProfile[64];
+	char nextBootProfile[64];
 };
 static struct LoaderConfig ldrConfig = { 0 };
 
@@ -126,7 +128,9 @@ static size_t search_for_profile(const char* name) {
 
 static int config_handler(void* user, const char* section, const char* name, const char* value) {
 	if (strcmp("loader", section) == 0) {
-		if (strcmp("default", name) == 0) {
+		if (strcmp("nextBoot", name) == 0) {
+			strncpy(ldrConfig.defaultProfile, value, sizeof(ldrConfig.nextBootProfile));
+		} else if (strcmp("default", name) == 0) {
 			strncpy(ldrConfig.defaultProfile, value, sizeof(ldrConfig.defaultProfile));
 		}
 	} else if (strncmp("profile:", section, 8) == 0) {
@@ -146,6 +150,41 @@ static int config_handler(void* user, const char* section, const char* name, con
 	return 1;
 }
 
+char * read_line(FILE *fin) { //thx StackExchange. TODO: audit, clean up
+    char *buffer;
+    char *tmp;
+    int read_chars = 0;
+    int bufsize = 512;
+    char *line = malloc(bufsize);
+
+    if (!line) return NULL;
+
+    buffer = line;
+
+    while ( fgets(buffer, bufsize - read_chars, fin) ) {
+        read_chars = strlen(line);
+
+        if ( line[read_chars - 1] == '\n' ) {
+            line[read_chars - 1] = '\0';
+            return line;
+        }
+
+        else {
+            bufsize = 2 * bufsize;
+            tmp = realloc(line, bufsize);
+            if ( tmp ) {
+                line = tmp;
+                buffer = line + read_chars;
+            }
+            else {
+                free(line);
+                return NULL;
+            }
+        }
+    }
+    return NULL;
+}
+
 void NORETURN app_run() {
 	int res;
 	bool kernel_loaded = false;
@@ -156,14 +195,43 @@ void NORETURN app_run() {
 /*	It doesn't really matter if this fails */
 	ini_parse("sdmc:/linux/boot.cfg", &config_handler, NULL);
 
-/*	Find the user-selected default profile */
+/*	Attempt to find nextBoot profile */
 	size_t profileNdx;
 	bool profileFound = false;
 	for (profileNdx = 0; profileNdx < NUM_PROFILES; profileNdx++) {
 		if (!profiles[profileNdx].enabled) continue;
-		if (strcmp(ldrConfig.defaultProfile, profiles[profileNdx].name) == 0) {
+		if (strcmp(ldrConfig.nextBootProfile, profiles[profileNdx].name) == 0) {
+			printf("[BOOT] Next-boot config found, skipping default config\n");
 			profileFound = true;
+			/*	Since nextBoot was found successfully, comment it out so it doesn't boot next time */
+				FILE* config = fopen("sdmc:/linux/boot.cfg", "r");
+				FILE* newconfig_temp = fopen("sdmc:/linux/newConfigTemp.cfg", "w");
+				char *line=NULL;
+				while ( (line = read_line(config)) != NULL ) {
+					if (strncmp(line, "nextBoot", 8)!=0){
+						printf("[BOOT] Found line to comment out: %s\n", line);
+						fputc(';', newconfig_temp);
+					}
+					fprintf(newconfig_temp, "%s\n", line);
+					free(line);
+				}
+				fclose(config);
+				fclose(newconfig_temp);
+				remove("sdmc:/linux/boot.cfg");
+				rename("sdmc:/linux/newConfigTemp.cfg", "sdmc:/linux/boot.cfg");
 			break;
+		}
+	}
+	
+/*	If that failed, find the user-selected default profile */
+	if(!profileFound) {
+		printf("[BOOT] No next-boot config found, using default config\n");
+		for (profileNdx = 0; profileNdx < NUM_PROFILES; profileNdx++) {
+			if (!profiles[profileNdx].enabled) continue;
+			if (strcmp(ldrConfig.defaultProfile, profiles[profileNdx].name) == 0) {
+				profileFound = true;
+				break;
+			}
 		}
 	}
 
