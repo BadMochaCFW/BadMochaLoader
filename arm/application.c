@@ -30,6 +30,7 @@
 #include "system/memory.h"
 #include "system/irq.h"
 #include "system/smc.h"
+#include "system/i2c.h"
 #include "system/latte.h"
 #include "storage/isfs.h"
 #include "common/utils.h"
@@ -154,12 +155,34 @@ static int config_handler(void* user, const char* section, const char* name, con
 	return 1;
 }
 
+#define GP_WIFI_MODE    (1 << 29)
+
+void wifi_init() //MASSIVE kudos to rw, worked on the first shot!
+{
+	// Turn Wifi On (set WiFiMode to 1)
+	set32(LT_GPIO_ENABLE, GP_WIFI_MODE);
+	set32(LT_GPIO_DIR, GP_WIFI_MODE);
+	set32(LT_GPIO_OUT, GP_WIFI_MODE);
+
+	// Set the wifi reset pin
+	u8 reg;
+	smc_read_register(0x46, &reg);
+	smc_write_register(0x46, reg | 1);
+
+	// Send a reset pulse
+	u8 pulse = 0x21;
+	i2c_init(5000, 1);
+	i2c_write(0x50, &pulse, 1);
+}
+
 void NORETURN app_run() {
 	int res;
 	bool kernel_loaded = false;
 
 /*	Clear out the PowerPC comms area */
 	memset(ppc_data, 0, sizeof(*ppc_data));
+	
+	wifi_init(); //placement? not sure -CompuCat
 
 /*	It doesn't really matter if this fails */
 	ini_parse("sdmc:/linux/boot.cfg", &config_handler, NULL);
