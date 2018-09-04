@@ -159,20 +159,17 @@ static int config_handler(void* user, const char* section, const char* name, con
 
 void wifi_init() //MASSIVE kudos to rw, worked on the first shot!
 {
-	// Turn Wifi On (set WiFiMode to 1)
-	set32(LT_GPIO_ENABLE, GP_WIFI_MODE);
-	set32(LT_GPIO_DIR, GP_WIFI_MODE);
-	set32(LT_GPIO_OUT, GP_WIFI_MODE);
+    // Set the wifi reset pin
+    u8 reg;
+    smc_read_register(0x46, &reg);
+    smc_write_register(0x46, reg | 1);
 
-	// Set the wifi reset pin
-	u8 reg;
-	smc_read_register(0x46, &reg);
-	smc_write_register(0x46, reg | 1);
+    udelay(100000);
 
-	// Send a reset pulse
-	u8 pulse = 0x21;
-	i2c_init(5000, 1);
-	i2c_write(0x50, &pulse, 1);
+    // Turn Wifi On (set WiFiMode to 1)
+    set32(LT_GPIO_ENABLE, GP_WIFI_MODE);
+    set32(LT_GPIO_DIR, GP_WIFI_MODE);
+    set32(LT_GPIO_OUT, GP_WIFI_MODE);
 }
 
 void NORETURN app_run() {
