@@ -39,6 +39,10 @@ CFLAGS			:=	-g -std=c11 -Wall -O3 \
 
 CFLAGS			+=	$(INCLUDE) -DCAN_HAZ_IRQ -D_GNU_SOURCE -fno-builtin-printf -Wno-nonnull
 
+ifeq ($(LOLSERIAL_OUTPUT),1)
+CFLAGS			+=	-DLOLSERIAL_OUTPUT
+endif
+
 CXXFLAGS		:=	$(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS			:=	-g $(ARCH)

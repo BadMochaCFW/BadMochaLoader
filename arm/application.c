@@ -36,6 +36,7 @@
 #include "storage/sd/sdcard.h"
 #include "storage/sd/fatfs/elm.h"
 #include "common/ini.h"
+#include "common/lolserial.h"
 
 #include "application.h"
 #include "ipc_protocol.h"
@@ -104,7 +105,11 @@ static void SRAM_TEXT NORETURN app_run_sram() {
 			buf[1] = (msg & 0x0000FF00) >>  8;
 			buf[2] = (msg & 0x000000FF) >>  0;
 			buf[3] = '\0';
+#ifdef LOLSERIAL_OUTPUT
+			lolserial_print(buf);
+#else
 			sram_print(buf);
+#endif
 		}
 
 		//writeback ctrl value to reset IPC

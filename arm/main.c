@@ -33,6 +33,7 @@
 #include "application.h"
 #include "system/smc.h"
 #include "system/latte.h"
+#include "common/lolserial.h"
 #include "common/utils.h"
 
 void NORETURN _main(void* base) {
@@ -71,6 +72,12 @@ void NORETURN _main(void* base) {
 	write32(LT_GPIO_ENABLE, 0xFFFFFFFF);
 	write32(LT_GPIO_OWNER, 0xFFFFFFFF);
 	printf("[ OK ] Unrestricted Hardware\n");
+
+#ifdef LOLSERIAL_OUTPUT
+	lolserial_init();
+	lolserial_print("linux-loader: LOLSerial output enabled\n");
+	printf("[ OK ] LOLserial enabled\n");
+#endif
 
 	printf("--------------------------\n");
 	printf("          Ready!          \n");
