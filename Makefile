@@ -33,11 +33,11 @@ DATA				:=
 #---------------------------------------------------------------------------------
 ARCH			:=	-march=armv5te -mcpu=arm926ej-s -marm -mthumb-interwork -mbig-endian -mfloat-abi=soft
 
-CFLAGS			:=	-g -std=c11 -Wall -O3 \
+CFLAGS			:=	-g -std=c11 -Wall -O0 \
 					-fomit-frame-pointer -ffunction-sections \
 					$(ARCH)
 
-CFLAGS			+=	$(INCLUDE) -DCAN_HAZ_IRQ -D_GNU_SOURCE -fno-builtin-printf -Wno-nonnull
+CFLAGS			+=	$(INCLUDE) -DCAN_HAZ_IRQ -D_GNU_SOURCE -DNOCACHES -fno-builtin-printf -Wno-nonnull
 
 CXXFLAGS		:=	$(CFLAGS) -fno-rtti -fno-exceptions
 

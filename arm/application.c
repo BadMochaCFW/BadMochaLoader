@@ -154,60 +154,53 @@ static int config_handler(void* user, const char* section, const char* name, con
 	return 1;
 }
 
+void u32_hexdump(volatile u32* addr) {
+	printf("  %08x: %08x %08x %08x %08x\n", &addr[0], addr[0], addr[1], addr[2], addr[3]);
+	//printf("  %08x: %08x %08x %08x %08x\n", &addr[4], addr[4], addr[5], addr[6], addr[7]);
+	//printf("  %08x: %08x %08x %08x %08x\n", &addr[8], addr[8], addr[9], addr[10], addr[11]);
+}
+
 void NORETURN app_run() {
-	int res;
-	bool kernel_loaded = false;
+	gfx_clear(GFX_ALL, BLACK);
 
-/*	Clear out the PowerPC comms area */
-	memset(ppc_data, 0, sizeof(*ppc_data));
+	void* mem1a = 0x00000200;
+	//init to known pattern
+	((volatile u32*)mem1a)[0] = 0x12345678;
+	((volatile u32*)mem1a)[1] = 0x9ABCDEF0;
+	((volatile u32*)mem1a)[2] = 0x0FEDCBA9;
+	((volatile u32*)mem1a)[3] = 0x87654321;
 
-/*	It doesn't really matter if this fails */
-	ini_parse("sdmc:/linux/boot.cfg", &config_handler, NULL);
+	u32_hexdump(mem1a);
 
-/*	Find the user-selected default profile */
-	size_t profileNdx;
-	bool profileFound = false;
-	for (profileNdx = 0; profileNdx < NUM_PROFILES; profileNdx++) {
-		if (!profiles[profileNdx].enabled) continue;
-		if (strcmp(ldrConfig.defaultProfile, profiles[profileNdx].name) == 0) {
-			profileFound = true;
-			break;
-		}
-	}
+	//try and trigger some corruptions
+	((volatile u8*)mem1a)[0] = 0x42;
+	u32_hexdump(mem1a);
+	((volatile u8*)mem1a)[5] = 0x33;
+	u32_hexdump(mem1a);
+	((volatile u8*)mem1a)[0xA] = 0x24;
+	u32_hexdump(mem1a);
+	((volatile u8*)mem1a)[0xF] = 0x15;
+	u32_hexdump(mem1a);
 
-/*	Load kernel according to config file profile */
-	if (profileFound) {
-		printf("[INFO] Trying to load kernel from %s...\n", profiles[profileNdx].kernelPath);
-		res = ppc_load_file(profiles[profileNdx].kernelPath, &ppc_entry);
-		if (res >= 0) kernel_loaded = true;
+	void* mem1b = 0x00002000;
+	((volatile u32*)mem1b)[0] = 0x12345678;
+	((volatile u32*)mem1b)[1] = 0x9ABCDEF0;
+	((volatile u32*)mem1b)[2] = 0x0FEDCBA9;
+	((volatile u32*)mem1b)[3] = 0x87654321;
 
-	/*	Put kernel commandline at end of memory, ready for the boot wrapper to read */
-		if (strlen(profiles[profileNdx].kernelCmd) > 0) {
-			strlcpy(ppc_data->cmdline, profiles[profileNdx].kernelCmd, sizeof(ppc_data->cmdline));
-			write32((unsigned int)&ppc_data->magic, WIIU_LOADER_MAGIC);
-		}
-	}
+	((volatile u8*)mem1b)[0] = 0x42;
+	u32_hexdump(mem1b);
+	((volatile u8*)mem1b)[5] = 0x33;
+	u32_hexdump(mem1b);
+	((volatile u8*)mem1b)[0xA] = 0x24;
+	u32_hexdump(mem1b);
+	((volatile u8*)mem1b)[0xF] = 0x15;
+	u32_hexdump(mem1b);
 
-/*	If that failed, use the default kernel locations */
-	if (!kernel_loaded) {
-	/*	Try each deafault location */
-		for (int i = 0; i < sizeof(kernel_locs) / sizeof(const char*); i++) {
-			printf("[INFO] Trying to load kernel from %s...\n", kernel_locs[i]);
-			res = ppc_load_file(kernel_locs[i], &ppc_entry);
-			if (res >= 0) {
-				kernel_loaded = true;
-				break;
-			}
-		}
-	}
+	u32_hexdump(mem1a);
+	u32_hexdump(mem1b);
 
-	if (!kernel_loaded) {
-		char errorstr[] = "Loading linux kernel failed! See Gamepad for details.";
-		gfx_draw_string(GFX_TV, errorstr, (1280 - sizeof(errorstr)*8) / 2, 500, WHITE);
-		printf("[FATL] Loading PowerPC kernel failed! (%d)\n", res);
-		panic(0);
-	}
-	printf("[ OK ] Loaded PowerPC kernel (%d). Entry is %08lX.\n", res, ppc_entry);
+	while (1) {}
 
 	//Shut everything down, ready for SRAM switch
 	ELM_Unmount();
@@ -222,5 +215,6 @@ void NORETURN app_run() {
 	printf("[BYE ] Doing SRAM context switch...\n");
 
 	//Move execution to SRAM. Linux will overwrite everything in MEM2, including this code.
-	sram_ctx_switch(&app_run_sram);
+	//sram_ctx_switch(&app_run_sram);
+
 }
