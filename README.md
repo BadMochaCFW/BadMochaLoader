@@ -1,7 +1,7 @@
 # My Own Wii U CFW
 **An ARM firmware image for the Wii U, designed to to be my own custom cfw for the wii u**
 
-### Getting THe Custom Wii U CFW
+### Getting The Custom Wii U CFW
 ##### Prebuilt Download
 A precompiled fw.img is not available [here](bonk.com). Don't think about it too much. Once you've got that, jump down to "Setup" and keep reading.
 
