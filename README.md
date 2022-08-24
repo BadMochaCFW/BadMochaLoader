@@ -22,7 +22,7 @@ You should now find a fw.img in your linux-loader folder! Congrats. Read the "Se
 First, edit `castify.py` to add the Starbuck key/IV - this is required to work with current CFW loaders. Then, just run make. You'll need devkitARM installed. You should end up with a fw.img, along with a bunch of ELF files.
 
 ### Setup
-You'll need an SD card normally readable by the Wii U. Simply copy the fw.img to the root of the SD; then copy `dtbImage.wiiu` to `sd:/linux` (you should end up with `sd:/linux/dtbImage.wiiu`).
+You'll need an SD card normally readable by the Wii U. Simply copy the fw.img to the root of the SD; then just run it.
 
 ### Running
 Once you've done everything in the Setup stage, just run your favorite CFW booter (CBHC works, as does the old wiiubru loader, and the Aroma beta). With any luck, you should see Hello World.
