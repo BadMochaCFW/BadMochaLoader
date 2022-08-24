@@ -1,4 +1,4 @@
-name: Packer Builder
+name: My CFW Builder
 on: [push]
 
 jobs:
@@ -7,16 +7,5 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Start Running Build Shell Script
-        run: |
-             wget https://github.com/SmmServer/FakeOnlineFiles/blob/master/otp.bin
-             echo cant rn
-             # docker build
-             # docker run sed s/B5XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/${DEFINITELY_LEGAL}/g -i castify.py
-             # docker run sed s/91XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/${DO_THEY_EVEN_CARE}/g -i castify.py
-             # docker run make
-    - name: Download Output
-        uses: actions/upload-artifact@v2
-        with:
-          name: output
-          path: fw.img
+      - name: Start Compiling CFW
+        run: wget https://github.com/SmmServer/FakeOnlineFiles/blob/master/otp.bin && echo cant rn #docker build && docker run sed s/B5XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/${DEFINITELY_LEGAL}/g -i castify.py && docker run sed s/91XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/${DO_THEY_EVEN_CARE}/g -i castify.py && docker run make
