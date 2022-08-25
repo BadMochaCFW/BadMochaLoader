@@ -9,6 +9,9 @@ try:
 except ImportError:
     from urllib2 import urlopen
 
+wiiu_common_key = "you have to insert this yourself"
+starbuck_ancast_key = "you have to insert this yourself"    
+    
 print("somewhat simple otp keys extractor") 
 print("This Is Legal, The otp.bin in this repo is a fake online otp.bin for cemu")
 otpbinpath = os.path.abspath("../otp.bin")
