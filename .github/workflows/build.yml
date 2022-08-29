@@ -8,4 +8,4 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Start Compiling CFW
-        run: pip3 install CryptoAesGcm && wget https://github.com/SmmServer/FakeOnlineFiles/blob/master/otp.bin && cd scripts && python3 otpkey.py && echo extracted keys && echo Done #docker build && docker run sed s/B5XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/${DEFINITELY_LEGAL}/g -i castify.py && docker run sed s/91XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/${DO_THEY_EVEN_CARE}/g -i castify.py && docker run make
+        run: pip3 install CryptoAesGcm && wget https://github.com/PokeyManatee4/MyFakeOnlineFiles/blob/main/otp.bin && cd scripts && python3 otpkey.py && echo extracted keys && echo Done #docker build && docker run sed s/B5XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/${DEFINITELY_LEGAL}/g -i castify.py && docker run sed s/91XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/${DO_THEY_EVEN_CARE}/g -i castify.py && docker run make
