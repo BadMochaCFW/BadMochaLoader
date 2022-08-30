@@ -1,11 +1,23 @@
 name: My CFW Builder
-on: [push]
+on: [push, pull_request]
 
 jobs:
-  build_and_test:
-    runs-on: ubuntu-latest
+  build:
+    name: Build usb payload
+    runs-on: ubuntu-20.04
+    container: devkitpro/devkitarm:20210622
+ 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Start Compiling CFW
-        run: echo Starting && docker build $(pwd)
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - name: Make The Custom Firmware
+      run: |
+        apt-get update -y && apt-get install --no-install-recommends -y python3-crypto && make -j$(nproc)
+    - name: Upload The Patcher To Download
+      uses: actions/upload-artifact@v2
+      with: 
+        name: patcher download
+        path: |
+         /__w/Martini/Martini/build
