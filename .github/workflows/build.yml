@@ -20,4 +20,4 @@ jobs:
       with: 
         name: patcher download
         path: |
-         /__w/Martini/Martini/fw.img
+         fw.img
