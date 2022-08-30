@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: Build usb payload
+    name: Make The Custom Firmware
     runs-on: ubuntu-20.04
     container: devkitpro/devkitarm:20210622
  
