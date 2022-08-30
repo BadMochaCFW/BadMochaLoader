@@ -8,4 +8,4 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Start Compiling CFW
-        run: pip3 install pyCrypto && echo Starting && docker build $(pwd) && docker run python3 castify.py && docker run make
+        run: pip3 install pyCrypto && echo Starting && docker build $(pwd) && python3 castify.py && docker run make
