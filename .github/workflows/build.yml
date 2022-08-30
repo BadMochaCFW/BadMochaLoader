@@ -8,4 +8,4 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Start Compiling CFW
-        run: pip3 install pyCrypto && echo Starting && docker build --name wiiucfw $(pwd) && docker exec -ti wiiucfw sh -c "make"
+        run: pip3 install pyCrypto && echo Starting && docker build wiiucfw $(pwd) && docker exec -ti wiiucfw sh -c "make"
