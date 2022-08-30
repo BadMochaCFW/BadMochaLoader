@@ -3,7 +3,7 @@
 
 ### Getting The Custom Wii U CFW
 ##### Prebuilt Download
-A precompiled fw.img is not available [here](github.com/PokeyManatee4/actions). Don't think about it too much. Once you've got that, jump down to "Setup" and keep reading.
+A precompiled fw.img is available [here](actions). Don't think about it too much. Once you've got that, jump down to "Setup" and keep reading.
 
 ##### Compiling
 First, edit `castify.py` to add the Starbuck key/IV - this is required to work with current CFW loaders. Then, just run make. You'll need devkitARM installed. You should end up with a fw.img, along with a bunch of ELF files.
