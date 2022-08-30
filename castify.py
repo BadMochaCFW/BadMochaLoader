@@ -7,9 +7,6 @@ from base64 import b16decode
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA
 
-#To get the IV: Compile dimok789/FIX94's iosuhax, copy them out of scripts/keys.py.
-#make sure to capitalise all the letters
-print("This Is Legal, The otp.bin in this repo is a fake online otp.bin for cemu")
 key = b16decode(b"B5D8AB06ED7F6CFC529F2CE1B4EA32FD")
 iv = b16decode(b"91C9D008312851EF6B228BF14BAD4322")
 
