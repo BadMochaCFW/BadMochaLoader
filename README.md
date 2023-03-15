@@ -1,6 +1,7 @@
 # My Own Wii U CFW
 **An ARM firmware image for the Wii U, designed to to be my own custom cfw for the wii u**
 
+[![My CFW Builder](https://github.com/BadMochaCFW/BadMochaLoader/actions/workflows/build.yml/badge.svg)](https://github.com/BadMochaCFW/BadMochaLoader/actions/workflows/build.yml)
 ### Getting The Custom Wii U CFW
 ##### Prebuilt Download
 A precompiled fw.img is available [here](github.com/PokeyManatee4/mywiiucfw/actions). Don't think about it too much. Once you've got that, jump down to "Setup" and keep reading.
