@@ -43,10 +43,6 @@
 
 
 
-struct LoaderConfig {
-	char defaultProfile[64];
-};
-static struct LoaderConfig ldrConfig = { 0 };
 
 #define NUM_PROFILES 4
 struct ProfileConfig {
@@ -78,7 +74,7 @@ static struct wiiu_ppc_data* ppc_data = (void*)0x89200000;
 u32 SRAM_DATA ppc_entry = 0;
 
 static void SRAM_TEXT NORETURN app_run_sram() {
-	//Uncomment to completely erase linux-loader from MEM2
+	//Uncomment to completely erase -loader from MEM2
 	//memset32((void*)0x10000000, 0, 0x800000);
 	gfx_clear(GFX_DRC, BLACK);
 	//Start the PowerPC
@@ -110,50 +106,11 @@ static void SRAM_TEXT NORETURN app_run_sram() {
 	}
 }
 
-static size_t search_for_profile(const char* name) {
-/*	Check if the profile exists */
-	for (size_t i = 0; i < NUM_PROFILES; i++) {
-		if (profiles[i].enabled) {
-			if (strcmp(name, profiles[i].name) == 0) {
-				return i;
-			}
-		}
-	}
-/*	If not, find the first unused slot and initialise it */
-	for (size_t i = 0; i < NUM_PROFILES; i++) {
-		if (!profiles[i].enabled) {
-			strlcpy(profiles[i].name, name, sizeof(profiles[i].name));
-			profiles[i].enabled = true;
-			return i;
-		}
-	}
-	return ~0;
-}
 
-static int config_handler(void* user, const char* section, const char* name, const char* value) {
-	if (strcmp("loader", section) == 0) {
-		if (strcmp("default", name) == 0) {
-			strlcpy(ldrConfig.defaultProfile, value, sizeof(ldrConfig.defaultProfile));
-		}
-	} else if (strncmp("profile:", section, 8) == 0) {
-		size_t ndx = search_for_profile(section + 8);
-		if (ndx == ~0) {
-			printf("Couldn't allocate profile for %s\n", section);
-			return 0;
-		}
-		if (strcmp("name", name) == 0) {
-			strlcpy(profiles[ndx].humanName, value, sizeof(profiles[ndx].humanName));
-		} else if (strcmp("kernel", name) == 0) {
-			strlcpy(profiles[ndx].kernelPath, value, sizeof(profiles[ndx].kernelPath));
-		} else if (strcmp("cmdline", name) == 0) {
-			strlcpy(profiles[ndx].kernelCmd, value, sizeof(profiles[ndx].kernelCmd));
-		}
-	}
-	return 1;
-}
+
 
 void NORETURN app_run() {
-
+      app_run_sram()
       printf("Hello From App Kernel");
 
 }
