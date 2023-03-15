@@ -57,7 +57,7 @@ void NORETURN _main(void* base) {
 
 
 	char errorstr[] = "Hello World";
-	x_draw_string(GFX_TV, errorstr, (1280 - sizeof(errorstr)*8) / 2, 500, WHITE);
+	_draw_string(GFX_TV, errorstr, (1280 - sizeof(errorstr)*8) / 2, 500, WHITE);
 
 
 	printf("--------------------------\n");
