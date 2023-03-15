@@ -60,9 +60,9 @@ void NORETURN _main(void* base) {
 	draw_string(GFX_TV, errorstr, (1280 - sizeof(errorstr)*8) / 2, 500, WHITE);
 
 
-	printf("--------------------------\n");
+	
 	printf("          Ready!          \n");
-	printf("--------------------------\n");
+	
 	
 
 
