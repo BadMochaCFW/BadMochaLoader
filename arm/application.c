@@ -153,8 +153,7 @@ static int config_handler(void* user, const char* section, const char* name, con
 }
 
 void NORETURN app_run() {
-	int res;
-	bool kernel_loaded = true;
 
+      printf("Hello From App Kernel");
 
 }
