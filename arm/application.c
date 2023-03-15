@@ -157,72 +157,7 @@ static int config_handler(void* user, const char* section, const char* name, con
 
 void NORETURN app_run() {
 	int res;
-	bool kernel_loaded = false;
+	bool kernel_loaded = true;
 
-/*	Clear out the PowerPC comms area */
-	memset(ppc_data, 0, sizeof(*ppc_data));
 
-/*	It doesn't really matter if this fails */
-	ini_parse("sdmc:/linux/boot.cfg", &config_handler, NULL);
-
-/*	Find the user-selected default profile */
-	size_t profileNdx;
-	bool profileFound = false;
-	for (profileNdx = 0; profileNdx < NUM_PROFILES; profileNdx++) {
-		if (!profiles[profileNdx].enabled) continue;
-		if (strcmp(ldrConfig.defaultProfile, profiles[profileNdx].name) == 0) {
-			profileFound = true;
-			break;
-		}
-	}
-
-/*	Load kernel according to config file profile */
-	if (profileFound) {
-		printf("[INFO] Trying to load kernel from %s...\n", profiles[profileNdx].kernelPath);
-		res = ppc_load_file(profiles[profileNdx].kernelPath, &ppc_entry);
-		if (res >= 0) kernel_loaded = true;
-
-	/*	Put kernel commandline at end of memory, ready for the boot wrapper to read */
-		if (strlen(profiles[profileNdx].kernelCmd) > 0) {
-			strlcpy(ppc_data->cmdline, profiles[profileNdx].kernelCmd, sizeof(ppc_data->cmdline));
-			write32((unsigned int)&ppc_data->magic, WIIU_LOADER_MAGIC);
-		}
-	}
-
-/*	If that failed, use the default kernel locations */
-	if (!kernel_loaded) {
-	/*	Try each deafault location */
-		for (int i = 0; i < sizeof(kernel_locs) / sizeof(const char*); i++) {
-			printf("[INFO] Trying to load kernel from %s...\n", kernel_locs[i]);
-			res = ppc_load_file(kernel_locs[i], &ppc_entry);
-			if (res >= 0) {
-				kernel_loaded = true;
-				break;
-			}
-		}
-	}
-
-	if (!kernel_loaded) {
-		char errorstr[] = "Loading linux kernel failed! See Gamepad for details.";
-		gfx_draw_string(GFX_TV, errorstr, (1280 - sizeof(errorstr)*8) / 2, 500, WHITE);
-		printf("[FATL] Loading PowerPC kernel failed! (%d)\n", res);
-		panic(0);
-	}
-	printf("[ OK ] Loaded PowerPC kernel (%d). Entry is %08lX.\n", res, ppc_entry);
-
-	//Shut everything down, ready for SRAM switch
-	ELM_Unmount();
-	sdcard_exit();
-	irq_disable(IRQ_SD0);
-	isfs_fini();
-	nand_deinitialize();
-	irq_shutdown();
-	printf("[ OK ] Unmounted filesystems and removed interrupts.\n");
-	mem_shutdown();
-	printf("[ OK ] Disabled caches/MMU\n");
-
-	printf("[BYE ] Doing SRAM context switch...\n");
-
-	//Move execution to SRAM. Linux will overwrite everything in MEM2, including this code.
-	sram_ctx_switch(&app_run_sram);
 }
