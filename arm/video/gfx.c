@@ -154,7 +154,7 @@ void SRAM_TEXT draw_string(gfx_screen_t screen, const char* str, int x, int y, u
 {
 	if(screen == GFX_ALL) {
 		for(int i = 0; i < GFX_ALL; i++)
-			gfx_draw_string(i, str, x, y, color);
+			draw_string(i, str, x, y, color);
 	} else {
 		if(!str) return;
 
