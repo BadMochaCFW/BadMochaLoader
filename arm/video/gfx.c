@@ -189,7 +189,7 @@ void SRAM_TEXT sram_print(const char* msg) {
 	if (fbs[screen].current_y + lines >= fbs[screen].height - 20) {
 		gfx_clear(screen, BLACK);
 	}
-	gfx_draw_string(screen, msg, fbs[screen].current_x, fbs[screen].current_y, GREEN);
+	draw_string(screen, msg, fbs[screen].current_x, fbs[screen].current_y, GREEN);
 
 	fbs[screen].current_y += lines;
 	fbs[screen].current_x = width;
