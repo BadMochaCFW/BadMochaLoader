@@ -52,14 +52,13 @@ void NORETURN _main(void* base) {
 	irq_initialize();
 	printf("[ OK ] Setup Interrupts\n");
 
-	);
 
-	int res = ELM_Mount();
 
-		char errorstr[] = "Hello World";
-		gfx_draw_string(GFX_TV, errorstr, (1280 - sizeof(errorstr)*8) / 2, 500, WHITE);
-		printf("[FATL] SD Card mount error: %d\n", res);
-);
+
+
+	char errorstr[] = "Hello World";
+	x_draw_string(GFX_TV, errorstr, (1280 - sizeof(errorstr)*8) / 2, 500, WHITE);
+
 
 	printf("--------------------------\n");
 	printf("          Ready!          \n");
@@ -67,4 +66,4 @@ void NORETURN _main(void* base) {
 	
 
 
-}
+
