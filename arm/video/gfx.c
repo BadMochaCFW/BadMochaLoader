@@ -236,7 +236,7 @@ int printf(const char* fmt, ...)
 		if(fbs[GFX_DRC].current_y + lines >= fbs[GFX_DRC].height - 20)
 			gfx_clear(GFX_DRC, BLACK);
 
-		raw_string(GFX_DRC, str, /* current_x */ 10, fbs[GFX_DRC].current_y, WHITE);
+		draw_string(GFX_DRC, str, /* current_x */ 10, fbs[GFX_DRC].current_y, WHITE);
 		//current_x += strlen(last_line);
 		fbs[GFX_DRC].current_y += lines;
 	//}
