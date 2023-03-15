@@ -41,10 +41,7 @@
 #include "application.h"
 #include "ipc_protocol.h"
 
-static const char* kernel_locs[] = {
-	"sdmc:/linux/dtbImage.wiiu",
-	"sdmc:/linux/kernel"
-};
+
 
 struct LoaderConfig {
 	char defaultProfile[64];
