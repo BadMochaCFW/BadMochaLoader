@@ -41,16 +41,16 @@ void NORETURN _main(void* base) {
 	//Set up framebuffer/logging
 	abif_gpu_setup();
 	gfx_clear(GFX_ALL, BLACK);
-	printf("Hello World!\n");
-
+	
 	//Initialize everything
 	exception_initialize();
 	printf("[ OK ] Setup Exceptions\n");
-	mem_initialize();
-	printf("[ OK ] Turned on Caches/MMU\n");
+
 
 	irq_initialize();
 	printf("[ OK ] Setup Interrupts\n");
+	printf("Hello World!\n");
+
 
 
 
