@@ -44,29 +44,9 @@
 
 
 
-#define NUM_PROFILES 4
-struct ProfileConfig {
-	bool enabled;
-	char name[64];
-	char humanName[64];
-	char kernelPath[128];
-	char kernelCmd[256];
-};
-static struct ProfileConfig profiles[NUM_PROFILES] = { false };
-
-/* If this struct ever has to be changed in a non-ABI compatible way,
-   change the magic.
-   Past magics:
-    - 0xCAFEFECA: initial version
-*/
 #define WIIU_LOADER_MAGIC 0xCAFEFECA
-struct wiiu_ppc_data {
-	unsigned int magic;
-	char cmdline[256];
-	void* initrd;
-	unsigned int initrd_sz;
-};
-static struct wiiu_ppc_data* ppc_data = (void*)0x89200000;
+
+* ppc_data = (void*)0x89200000;
 
 #define LT_IPC_ARMCTRL_COMPAT_X1 0x4
 #define LT_IPC_ARMCTRL_COMPAT_Y1 0x1
