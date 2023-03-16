@@ -37,7 +37,7 @@
 #include "system/latte.h"
 #include "common/utils.h"
 
-void NORETURN _main(void* base) {
+void _main(void* base) {
 	//Set up framebuffer/logging
 	abif_gpu_setup();
 	gfx_clear(GFX_ALL, BLACK);
