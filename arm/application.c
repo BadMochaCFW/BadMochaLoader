@@ -89,7 +89,7 @@ static void SRAM_TEXT NORETURN app_run_sram() {
 
 
 
-void NORETURN app_run() {
+void app_run() {
       app_run_sram();
       printf("Hello From App Kernel");
 
