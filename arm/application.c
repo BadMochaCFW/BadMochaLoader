@@ -46,7 +46,7 @@
 
 #define WIIU_LOADER_MAGIC 0xCAFEFECA
 
-* ppc_data = (void*)0x89200000;
+
 
 #define LT_IPC_ARMCTRL_COMPAT_X1 0x4
 #define LT_IPC_ARMCTRL_COMPAT_Y1 0x1
