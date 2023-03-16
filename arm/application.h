@@ -25,7 +25,7 @@
 
 #include "common/types.h"
 
-void NORETURN app_run();
+void app_run();
 extern void NORETURN sram_ctx_switch(void (*sram_func)());
 
 #endif
